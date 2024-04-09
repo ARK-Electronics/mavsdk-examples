@@ -15,6 +15,9 @@ target_link_libraries(ftp_client
     MAVSDK::mavsdk
 )
 
+# Binary installation
+install(TARGETS ftp_client RUNTIME DESTINATION bin)
+
 if(NOT MSVC)
     add_compile_options(ftp_client PRIVATE -Wall -Wextra)
 else()
