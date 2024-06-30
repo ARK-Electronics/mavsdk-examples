@@ -10,7 +10,6 @@
 #include <future>
 #include <memory>
 #include <thread>
-#include <nlohmann/json.hpp>
 
 using namespace mavsdk;
 using std::chrono::seconds;
@@ -59,25 +58,27 @@ int main(int argc, char** argv)
     std::ostringstream version_string;
     version_string << version.flight_sw_major << '.' << version.flight_sw_minor << '.' << version.flight_sw_patch;
 
-    nlohmann::json j;
-    j["version"] = version_string.str();
-    j["git_hash"] = version.flight_sw_git_hash.c_str();
-
     std::string autopilot_type = "unknown";
     switch (system.value()->autopilot_type()) {
-    case Autopilot::Px4:
-        autopilot_type = "PX4";
-        break;
-    case Autopilot::ArduPilot:
-        autopilot_type = "Ardupilot";
-        break;
-    default:
-        break;
+        case Autopilot::Px4:
+            autopilot_type = "PX4";
+            break;
+        case Autopilot::ArduPilot:
+            autopilot_type = "ArduPilot";
+            break;
+        default:
+            break;
     }
 
-    j["autopilot_type"] = autopilot_type.c_str();
+    // Manually constructing the JSON output
+    std::ostringstream json_output;
+    json_output << "{\n"
+                << "  \"version\": \"" << version_string.str() << "\",\n"
+                << "  \"git_hash\": \"" << version.flight_sw_git_hash << "\",\n"
+                << "  \"autopilot_type\": \"" << autopilot_type << "\"\n"
+                << "}";
 
-    std::cout << j.dump(2) << std::endl;
+    std::cout << json_output.str() << std::endl;
 
     return 0;
 }
