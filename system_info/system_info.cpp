@@ -80,8 +80,8 @@ int main(int argc, char** argv)
     // Manually constructing the JSON output
     std::ostringstream json_output;
     json_output << "{\"version\": \"" << version_string.str() << "\", "
-                << "\"git_hash\": \"" << version.flight_sw_git_hash << "\", "
-                << "\"autopilot_type\": \"" << autopilot_type << "\""
+                << "\"git_hash\": \"" << version.flight_sw_git_hash.c_str() << "\", "
+                << "\"autopilot_type\": \"" << autopilot_type.c_str() << "\""
                 << "}";
 
     std::cout << json_output.str() << std::endl;
