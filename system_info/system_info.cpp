@@ -79,10 +79,9 @@ int main(int argc, char** argv)
 
     // Manually constructing the JSON output
     std::ostringstream json_output;
-    json_output << "{\n"
-                << "  \"version\": \"" << version_string.str() << "\",\n"
-                << "  \"git_hash\": \"" << version.flight_sw_git_hash << "\",\n"
-                << "  \"autopilot_type\": \"" << autopilot_type << "\"\n"
+    json_output << "{\"version\": \"" << version_string.str() << "\", "
+                << "\"git_hash\": \"" << version.flight_sw_git_hash << "\", "
+                << "\"autopilot_type\": \"" << autopilot_type << "\""
                 << "}";
 
     std::cout << json_output.str() << std::endl;
