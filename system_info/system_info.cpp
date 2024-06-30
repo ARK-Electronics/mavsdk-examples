@@ -10,6 +10,7 @@
 #include <future>
 #include <memory>
 #include <thread>
+#include <nlohmann/json.hpp>
 
 using namespace mavsdk;
 using std::chrono::seconds;
@@ -54,11 +55,29 @@ int main(int argc, char** argv)
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
-    std::cout << info.get_flight_information().second << std::endl;
-    std::cout << info.get_identification().second << std::endl;
-    std::cout << info.get_product().second << std::endl;
-    std::cout << info.get_version().second << std::endl;
-    std::cout << "Autopilot type: " << int(system.value()->autopilot_type()) << std::endl;
+    auto version = info.get_version().second;
+    std::ostringstream version_string;
+    version_string << version.flight_sw_major << '.' << version.flight_sw_minor << '.' << version.flight_sw_patch;
+
+    nlohmann::json j;
+    j["version"] = version_string.str();
+    j["git_hash"] = version.flight_sw_git_hash.c_str();
+
+    std::string autopilot_type = "unknown";
+    switch (system.value()->autopilot_type()) {
+    case Autopilot::Px4:
+        autopilot_type = "PX4";
+        break;
+    case Autopilot::ArduPilot:
+        autopilot_type = "Ardupilot";
+        break;
+    default:
+        break;
+    }
+
+    j["autopilot_type"] = autopilot_type.c_str();
+
+    std::cout << j.dump(2) << std::endl;
 
     return 0;
 }
