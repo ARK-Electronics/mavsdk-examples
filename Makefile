@@ -1,7 +1,6 @@
 all:
 	@cmake -Bbuild -H.
 	cmake --build build -j$(nproc)
-	@size build/ftp_client
 
 install:
 	@cmake -Bbuild -H.
