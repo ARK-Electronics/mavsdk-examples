@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/info/info.h>
+#include <mavsdk/log_callback.h>
 #include <iostream>
 #include <future>
 #include <memory>
@@ -31,6 +32,12 @@ int main(int argc, char** argv)
         usage(argv[0]);
         return 1;
     }
+
+    // Silence mavsdk noise
+    mavsdk::log::subscribe([](...) {
+     // https://mavsdk.mavlink.io/main/en/cpp/guide/logging.html
+     return true;
+    });
 
     Mavsdk mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::GroundStation}};
     ConnectionResult connection_result = mavsdk.add_any_connection(argv[1]);
