@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/info/info.h>
+#include <mavsdk/plugins/telemetry/telemetry.h>
 #include <mavsdk/log_callback.h>
 #include <iostream>
 #include <future>
@@ -54,6 +55,7 @@ int main(int argc, char** argv)
     }
 
     auto info = Info{system.value()};
+    auto telemetry = Telemetry{system.value()};
 
     // Wait until version/firmware information has been populated from the vehicle
     while (info.get_identification().first == Info::Result::InformationNotReceivedYet) {
@@ -77,11 +79,20 @@ int main(int argc, char** argv)
             break;
     }
 
+    // Get voltage/remaining/current
+    auto battery = telemetry.battery();
+    float voltage = battery.voltage_v;
+    float remaining = battery.remaining_percent;
+    float current = battery.current_battery_a;
+
     // Manually constructing the JSON output
     std::ostringstream json_output;
     json_output << "{\"version\": \"" << version_string.str() << "\", "
                 << "\"git_hash\": \"" << version.flight_sw_git_hash.c_str() << "\", "
-                << "\"autopilot_type\": \"" << autopilot_type.c_str() << "\""
+                << "\"autopilot_type\": \"" << autopilot_type.c_str() << "\", "
+                << "\"voltage\": \"" << std::to_string(voltage).c_str() << "\", "
+                << "\"remaining\": \"" << std::to_string(remaining).c_str() << "\", "
+                << "\"current\": \"" << std::to_string(current).c_str() << "\""
                 << "}";
 
     std::cout << json_output.str() << std::endl;
