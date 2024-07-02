@@ -72,13 +72,11 @@ int main(int argc, char** argv)
     });
 
     if (!_received_battery_status.load()) {
-        std::cout << "Waiting for Battery information to populate from system." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     // Wait until version/firmware information has been populated from the vehicle
     while (info.get_identification().first == Info::Result::InformationNotReceivedYet) {
-        std::cout << "Waiting for Version information to populate from system." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
