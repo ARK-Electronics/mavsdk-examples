@@ -57,21 +57,28 @@ int main(int argc, char** argv)
 
     auto system = mavsdk.first_autopilot(3.0);
     if (!system) {
-        std::cerr << "Timed out waiting for system\n";
+        std::cerr << "Timed out waiting for system" << std::endl;
         return 1;
     }
 
-    auto info = Info{system.value()};
     auto telemetry = Telemetry{system.value()};
+    auto info = Info{system.value()};
+
     telemetry.subscribe_battery([](Telemetry::Battery battery) {
         _voltage = battery.voltage_v;
         _current = battery.current_battery_a;
         _remaining = battery.remaining_percent;
+        _received_battery_status.store(true);
     });
+
+    if (!_received_battery_status.load()) {
+        std::cout << "Waiting for Battery information to populate from system." << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 
     // Wait until version/firmware information has been populated from the vehicle
     while (info.get_identification().first == Info::Result::InformationNotReceivedYet) {
-        std::cout << "Waiting for Version information to populate from system." << '\n';
+        std::cout << "Waiting for Version information to populate from system." << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
