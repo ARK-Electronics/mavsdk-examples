@@ -8,6 +8,7 @@
 #include <mavsdk/plugins/info/info.h>
 #include <mavsdk/plugins/telemetry/telemetry.h>
 #include <mavsdk/log_callback.h>
+#include <atomic>
 #include <iostream>
 #include <future>
 #include <memory>
@@ -16,6 +17,12 @@
 using namespace mavsdk;
 using std::chrono::seconds;
 using std::this_thread::sleep_for;
+
+float _voltage = {};
+float _current = {};
+float _remaining = {};
+
+std::atomic<bool> _received_battery_status = false;
 
 void usage(const std::string& bin_name)
 {
@@ -56,6 +63,11 @@ int main(int argc, char** argv)
 
     auto info = Info{system.value()};
     auto telemetry = Telemetry{system.value()};
+    telemetry.subscribe_battery([](Telemetry::Battery battery) {
+        _voltage = battery.voltage_v;
+        _current = battery.current_battery_a;
+        _remaining = battery.remaining_percent;
+    });
 
     // Wait until version/firmware information has been populated from the vehicle
     while (info.get_identification().first == Info::Result::InformationNotReceivedYet) {
@@ -79,8 +91,11 @@ int main(int argc, char** argv)
             break;
     }
 
+
     // Get voltage/remaining/current
     auto battery = telemetry.battery();
+
+
     float voltage = battery.voltage_v;
     float remaining = battery.remaining_percent;
     float current = battery.current_battery_a;
@@ -90,9 +105,9 @@ int main(int argc, char** argv)
     json_output << "{\"version\": \"" << version_string.str() << "\", "
                 << "\"git_hash\": \"" << version.flight_sw_git_hash.c_str() << "\", "
                 << "\"autopilot_type\": \"" << autopilot_type.c_str() << "\", "
-                << "\"voltage\": \"" << std::to_string(voltage).c_str() << "\", "
-                << "\"remaining\": \"" << std::to_string(remaining).c_str() << "\", "
-                << "\"current\": \"" << std::to_string(current).c_str() << "\""
+                << "\"voltage\": \"" << std::to_string(_voltage).c_str() << "\", "
+                << "\"remaining\": \"" << std::to_string(_remaining).c_str() << "\", "
+                << "\"current\": \"" << std::to_string(_current).c_str() << "\""
                 << "}";
 
     std::cout << json_output.str() << std::endl;
