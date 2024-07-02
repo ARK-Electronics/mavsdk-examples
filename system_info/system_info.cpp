@@ -71,13 +71,17 @@ int main(int argc, char** argv)
         _received_battery_status.store(true);
     });
 
-    if (!_received_battery_status.load()) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
 
     // Wait until version/firmware information has been populated from the vehicle
-    while (info.get_identification().first == Info::Result::InformationNotReceivedYet) {
+    int attempt = 0;
+    int max_attempts = 3;
+    while ((info.get_identification().first == Info::Result::InformationNotReceivedYet) ||
+            !_received_battery_status.load()) {
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
+        attempt++;
+
+        if (attempt >= max_attempts) break;
     }
 
     auto version = info.get_version().second;
@@ -95,15 +99,6 @@ int main(int argc, char** argv)
         default:
             break;
     }
-
-
-    // Get voltage/remaining/current
-    auto battery = telemetry.battery();
-
-
-    float voltage = battery.voltage_v;
-    float remaining = battery.remaining_percent;
-    float current = battery.current_battery_a;
 
     // Manually constructing the JSON output
     std::ostringstream json_output;
