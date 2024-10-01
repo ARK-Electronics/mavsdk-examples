@@ -72,12 +72,7 @@ int main(int argc, char** argv)
         if (!std::isnan(_voltage) && !std::isnan(_current) && !std::isnan(_remaining)) {
             _received_battery_status.store(true);
         }
-
-        std::cout << "_voltage: " << _voltage << std::endl;
-        std::cout << "_current: " << _current << std::endl;
-        std::cout << "_remaining: " << _remaining << std::endl;
     });
-
 
     // Wait until version/firmware information has been populated from the vehicle
     int attempt = 0;
