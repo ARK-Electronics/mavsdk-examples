@@ -68,9 +68,11 @@ int main(int argc, char** argv)
         _voltage = battery.voltage_v;
         _current = battery.current_battery_a;
         _remaining = battery.remaining_percent;
-        _received_battery_status.store(true);
-    });
 
+        if (!std::isnan(_voltage) && !std::isnan(_current) && !std::isnan(_remaining)) {
+            _received_battery_status.store(true);
+        }
+    });
 
     // Wait until version/firmware information has been populated from the vehicle
     int attempt = 0;
