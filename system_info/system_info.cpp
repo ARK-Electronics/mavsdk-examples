@@ -47,7 +47,7 @@ int main(int argc, char** argv)
      return true;
     });
 
-    Mavsdk mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::GroundStation}};
+    Mavsdk mavsdk{Mavsdk::Configuration{1, MAV_COMP_ID_ONBOARD_COMPUTER3,true}};
     ConnectionResult connection_result = mavsdk.add_any_connection(argv[1]);
 
     if (connection_result != ConnectionResult::Success) {
