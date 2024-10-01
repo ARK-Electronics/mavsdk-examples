@@ -68,7 +68,11 @@ int main(int argc, char** argv)
         _voltage = battery.voltage_v;
         _current = battery.current_battery_a;
         _remaining = battery.remaining_percent;
-        _received_battery_status.store(true);
+
+        if (!std::isnan(_voltage) && !std::isnan(_current) && !std::isnan(_remaining)) {
+            _received_battery_status.store(true);
+        }
+
         std::cout << "_voltage: " << _voltage << std::endl;
         std::cout << "_current: " << _current << std::endl;
         std::cout << "_remaining: " << _remaining << std::endl;
