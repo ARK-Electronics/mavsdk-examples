@@ -3,9 +3,9 @@ all:
 	cmake --build build -j$(nproc)
 
 install:
-	@cmake -Bbuild -H.
+	@cmake -Bbuild -H. -DCMAKE_INSTALL_PREFIX=$(HOME)/.local
 	cmake --build build -j$(nproc)
-	@sudo cmake --install build
+	@cmake --install build
 
 clean:
 	@rm -rf build logs
