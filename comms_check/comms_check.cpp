@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 
 
     auto heartbeat_callback = [](const mavlink_message_t& message) {
-        std::cout << "received heartbeat: " << message.sysid << "/" << message.compid << std::endl;
+        std::cout << "received heartbeat: " << int(message.sysid) << "/" << int(message.compid) << std::endl;
     };
 
     mavlink_passthrough.subscribe_message(
