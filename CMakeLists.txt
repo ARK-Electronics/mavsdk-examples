@@ -7,3 +7,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(ftp_client)
 add_subdirectory(system_info)
+add_subdirectory(comms_check)
