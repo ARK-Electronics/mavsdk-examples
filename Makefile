@@ -4,11 +4,10 @@ all:
 
 install:
 	@cmake -Bbuild -H. -DCMAKE_INSTALL_PREFIX=$(HOME)/.local
-	cmake --build build -j$(nproc)
-	@cmake --install build
+	@cmake --build build -j$(nproc) --install build
 
 clean:
 	@rm -rf build logs
 	@echo "All build artifacts removed"
 
-.PHONY: all clean
+.PHONY: all install clean
