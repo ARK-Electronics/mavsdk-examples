@@ -25,6 +25,7 @@ void usage(const std::string& bin_name)
 
 int main(int argc, char** argv)
 {
+    std::cout << "tester1" << std::endl;
     if (argc != 2) {
         usage(argv[0]);
         return 1;
@@ -50,16 +51,18 @@ int main(int argc, char** argv)
         return 1;
     }
 
+    std::cout << "Connected" << std::endl;
+
     auto mavlink_passthrough = MavlinkPassthrough{system.value()};
 
 
-    auto heartbeat_callback = [](const mavlink_message_t& message) {
-        std::cout << "received heartbeat: " << int(message.sysid) << "/" << int(message.compid) << std::endl;
+    auto camera_trigger_callback = [](const mavlink_message_t& message) {
+        std::cout << "camera_trigger_callback" << std::endl;
     };
 
     mavlink_passthrough.subscribe_message(
-        MAVLINK_MSG_ID_HEARTBEAT,
-        heartbeat_callback
+        MAVLINK_MSG_ID_CAMERA_TRIGGER,
+        camera_trigger_callback
     );
 
     uint32_t counter = 0;
