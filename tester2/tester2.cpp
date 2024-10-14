@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 
 
     auto camera_trigger_callback = [](const mavlink_message_t& message) {
-        std::cout << "camera_trigger_callback" << std::endl;
+        std::cout << "received CAMERA_TRIGGER" << std::endl;
     };
 
     mavlink_passthrough.subscribe_message(
